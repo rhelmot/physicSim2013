@@ -21,7 +21,7 @@ function workArea(options, callbacks) {
 }
 
 workArea.prototype.clear = function () {
-    this.context.clearRect(0,0,1855,968);
+    this.context.clearRect(0,0,document.body.clientWidth,document.body.clientHeight);
 };
 
 workArea.prototype.transform = function (options) {
