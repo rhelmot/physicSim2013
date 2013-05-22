@@ -1,0 +1,52 @@
+/* css */
+
+canvas {
+	outline: none;
+	z-index: -1;
+	position: absolute;
+}
+
+.controls {
+	position: absolute;
+	left: 20px;
+	top: 20px;
+	text-align: center;
+}
+
+.button {
+	background-color: #AAA;
+	border: solid 1px black;
+	font-family: courier, monospace;
+	font-size: 14px;
+	text-align: center;
+	display: inline-block;
+	width: 100px;
+}
+
+.button:hover {
+	background-color: #888;
+}
+.button:focus {
+	background-color: #888;
+}
+
+.button:active {
+	background-color: #CCC;
+}
+
+.square {
+	width: 30px;
+	height: 30px;
+}
+
+.selected {
+	background-color: #CCC;
+}
+
+.asdf:hover {
+	background-color: yellow;
+}
+
+#opts1, #opts2, #opts3 {
+	display: none;
+}

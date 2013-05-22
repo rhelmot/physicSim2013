@@ -134,17 +134,15 @@ function addParticle(whichParticle) {
 
 var workplace;
 var killcode;
+var running = false;
 
 window.onload = function () {
 	
-	workplace = new workArea({width: '100%', height: '100%'});
-	killcode = setInterval(function () {
+	workplace = new workArea({width: '100%', height: '100%'}, {onmousedown: mouseDown, onmousemove: mouseMove, onmouseup: mouseUp, ontouchdown: touchDown, ontouchmove: touchMove, ontouchup: touchUp});
+	killcode = setInterval(function () {							//MAIN LOOP
 		workplace.clear();
-		for (var i = 0; i < particleList.length; i++) {
-			for (var j = i + 1; j < particleList.length; j++) {
-				particleList[i].interact(particleList[j]);
-			}
-			particleList[i].process(0.016);
+		if (running) {
+			step(1);
 		}
 		for (var i = 0; i < fieldList.length; i++) {
 			for (var j = 0; j < particleList.length; j++) {
@@ -154,9 +152,48 @@ window.onload = function () {
 		for (var i = 0; i < particleList.length; i++) {
 			particleList[i].draw(workplace);
 		}
+		workplace.endProcess();
 	}, 16);
 };
 
+function step(frames) {
+	for (var i = 0; i < particleList.length; i++) {
+		for (var j = i + 1; j < particleList.length; j++) {
+			particleList[i].interact(particleList[j]);
+		}
+		particleList[i].process(frames*0.016);
+	}
+}
+
 function kill() {
 	clearInterval(killcode);
+}
+
+var currentTool = 0;
+//0 = add particle
+//1 = add field
+//2 = select
+
+function mouseDown(e) {
+	
+}
+
+function mouseMove(e) {
+
+}
+
+function mouseUp(e) {
+
+}
+
+function touchDown(e) {
+
+}
+
+function touchMove(e) {
+
+}
+
+function touchUp(e) {
+
 }
