@@ -1,4 +1,7 @@
-function workArea(options, callbacks) {
+function workArea(options, callbacks, dest) {
+	if (typeof dest == 'undefined') {
+		dest = document.body;
+	}
 	this.canvas = document.createElement('canvas');
 	this.context = this.canvas.getContext('2d')
 	var props = {
@@ -26,7 +29,7 @@ function workArea(options, callbacks) {
 	this.canvas.tabIndex = 1;
 	this.canvas.onselectstart = function () { return false; };
 	this.canvas.workArea = this;									//awwww yeah recursion
-	document.body.appendChild(this.canvas);
+	dest.appendChild(this.canvas);
 }
 
 workArea.prototype.clear = function () {
@@ -54,4 +57,25 @@ workArea.prototype.drawArrow = function (fromx, fromy, tox, toy) {
     this.context.moveTo(tox, toy);
     this.context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
     this.context.stroke();
-}
+};
+
+workArea.prototype.drawDot = function (centerX, centerY, radius, color, outline) {
+	this.context.beginPath();
+	this.context.fillStyle = color;
+	this.context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+    this.context.fill();
+	if (outline) {
+		this.context.strokeStyle = 'grey';
+		this.context.stroke();
+	}
+};
+
+workArea.prototype.drawX = function (centerX, centerY, radius, color) {
+	this.context.beginPath();
+	this.context.strokeStyle = color;
+	this.context.moveTo(centerX - radius, centerY - radius);
+	this.context.lineTo(centerX + radius, centerY + radius);
+	this.context.moveTo(centerX - radius, centerY + radius);
+	this.context.lineTo(centerX + radius, centerY - radius);
+	this.context.stroke();
+};

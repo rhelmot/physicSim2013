@@ -2,6 +2,9 @@
 
 canvas {
 	outline: none;
+}
+
+#workplace {
 	z-index: 1;
 	position: absolute;
 }

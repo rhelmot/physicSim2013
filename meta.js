@@ -18,7 +18,7 @@ var metaLoadCallback;
 ///Can be called more than once, but callbacks will be overwritten.
 ///////////
 
-metaLoad(['base.js', 'workArea.js', 'compatibility.js']);
+metaLoad(['base.js', 'workArea.js', 'compatibility.js', 'interface.js', 'vector.js', 'particle.js', 'field.js']);
 
 ///////////
 ///END APPLICATION-SPECIFIC CALLS

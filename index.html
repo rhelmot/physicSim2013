@@ -2,29 +2,44 @@
 <head>
 	<title>Physics Simulations</title>
 	<script src="meta.js"></script>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
 	<div id="controls">
 		<a class="button" id="startstop" onclick="run()">Run</a> <a class="button" id="step" onclick="step(1)">Step forward</a><br /><br />
-		Tool: <a class="button square" id="tool1"><img src="img/particle.png" /></a>
-		<a class="button square" id="tool2"><img src="img/field.png" /></a>
-		<a class="button square" id="tool3"><img src="img/select.png" /></a><br />
+		Tool: <a class="button square selected" id="tool0" onclick="selectTool(0)"><img src="img/particle.png" /></a>
+		<a class="button square" id="tool1" onclick="selectTool(1)"><img src="img/field.png" /></a>
+		<a class="button square" id="tool2" onclick="selectTool(2)"><img src="img/select.png" /></a><br />
 		
-		<div id="opts1" style="display:block;">
+		<div id="opts0" style="display:block;">
 			Add Particle<br /><br />
 			Charge (coulombs): <input type="text" id="particleCharge" value="0" style="width: 60px;" onchange="updateCharge()" />
 			x10^<input type="text" id="particleChargeExp" value="0" style="width:40px;" onchange="updateChargeExp()" /><br />
-			Mass (kilograms): <input type="text" id="particleMass" value="1" style="width: 60px;" onchange="updateMass()" /><br />
+			Mass (kilograms): <input type="text" id="particleMass" value="1" style="width: 60px;" onchange="updateMass()" />
 			x10^<input type="text" id="particleMassExp" value="0" style="width:40px;" onchange="updateMassExp()" /><br /><br />
 			<a class="button" onclick="clearOffscreen()">Clear offscreen particles</a>
 		</div>
 		
-		<div id="opts2">
-			Add Field
+		<div id="opts1">
+			Add Field<br /><br />
+			Type: <select id="fieldType" onchange="updateFieldType()">
+				<option value="electrical">Electrical</option>
+				<option value="magnetic">Magnetic</option>
+			</select><br />
+			Strength (<span id="funits">N/C=V/m</span>): <input type="text" id="fieldStrength" value="0" style="width: 60px;" onchange="updateStrength()" />
+			x10^<input type="text" id="fieldStrengthExp" value="0" style="width:40px;" onchange="updateStrengthExp()" /><br /><br />
+			Direction:<br />
+			<div id="eDirectionDiv">
+				<!-- canvas deploys here -->
+			</div>
+			<div id="mDirectionDiv" style="display: none;">
+				<input type="radio" name="mDirection" id="mDirectionIn" checked="checked" value="1" /> <label for="mDirectionIn">Into Page</label><br />
+				<input type="radio" name="mDirection" id="mDirectionOut" value="-1" /> <label for="mDirectionOut">Out Of Page</label><br />
+			</div>
+			
 		</div>
 		
-		<div id="opts3">
+		<div id="opts2">
 			Select
 		</div>
 	</div>

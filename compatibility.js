@@ -28,3 +28,11 @@
             clearTimeout(id);
         };
 }());
+
+function addClass(element, className) {
+	element.className += " " + className;
+}
+
+function removeClass(element, className) {
+	element.className = element.className.replace( new RegExp("(?:^|\\s)"+className+"(?!\\S)", "g") , '' )
+}
