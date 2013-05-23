@@ -1,6 +1,6 @@
 var particleList = [];
 var fieldList = [];
-var pixelsPerMeter = 1000;
+var pixelsPerMeter = 4000;
 
 function vector (components) {
 	this.components = components;
@@ -95,9 +95,10 @@ particle.prototype.draw = function (dest) {
 
 particle.prototype.interact = function (other) {
 	var fv = new vector([this.x - other.x, this.y - other.y, 0]);
-	var rv = fv.getUnitVector().scale(8.987551787e9*this.charge*other.charge/((fv.components[0]*fv.components[0]) + (fv.components[1]*fv.components[1])))
-	this.applyForce(rv);
-	other.applyForce(rv.scale(-1));
+	var ev = fv.getUnitVector().scale(8.987551787e9*this.charge*other.charge/((fv.components[0]*fv.components[0]) + (fv.components[1]*fv.components[1])))
+	this.applyForce(ev);
+	other.applyForce(ev.scale(-1));
+	var gv = fv.getUnitVector().scale(6.67384e-11*this.mass*other.mass/((fv.components[0]*fv.components[0]) + (fv.components[1]*fv.components[1])))
 };
 
 function field(processFunction) {
@@ -144,19 +145,27 @@ window.onload = function () {
 		if (running) {
 			step(1);
 		}
-		for (var i = 0; i < fieldList.length; i++) {
-			for (var j = 0; j < particleList.length; j++) {
-				fieldList[i].process(particleList[j]);
-			}
-		}
 		for (var i = 0; i < particleList.length; i++) {
 			particleList[i].draw(workplace);
 		}
-		workplace.endProcess();
+		if (settings.particle.dragging !== false) {
+		    workplace.drawArrow(settings.particle.dropX, settings.particle.dropY, particleList[settings.particle.dragging].x*pixelsPerMeter, particleList[settings.particle.dragging].y*pixelsPerMeter);
+		}
 	}, 16);
 };
 
+function run() {
+    running = !running;
+    document.getElementById('startstop').innerHTML = running?"Pause":"Run";
+    document.getElementById('step').disabled = running;
+}
+
 function step(frames) {
+	for (var i = 0; i < fieldList.length; i++) {
+		for (var j = 0; j < particleList.length; j++) {
+			fieldList[i].process(particleList[j]);
+		}
+	}
 	for (var i = 0; i < particleList.length; i++) {
 		for (var j = i + 1; j < particleList.length; j++) {
 			particleList[i].interact(particleList[j]);
@@ -174,16 +183,82 @@ var currentTool = 0;
 //1 = add field
 //2 = select
 
+var settings = {
+    particle: {
+        charge: 0,
+        chargeExp: 0,
+        mass: 1,
+        massExp: 0,
+        dropx: 0,
+        dropy: 0,
+        dragging: false
+    },
+    field: {
+        type: 'electrical',
+        strength: 1,
+    },
+    select: {
+    
+    }
+};
+
+function updateCharge() {
+    settings.particle.charge = parseFloat(document.getElementById('particleCharge').value);
+    document.getElementById('particleCharge').value = settings.particle.charge.toString();
+}
+
+function updateChargeExp() {
+    settings.particle.chargeExp = parseInt(document.getElementById('particleChargeExp').value);
+    document.getElementById('particleChargeExp').value = settings.particle.chargeExp.toString();
+}
+
+function updateMass() {
+    var m = parseFloat(document.getElementById('particleMass').value);
+    if (m <= 0) {
+        m = settings.particle.mass;
+    }
+    settings.particle.mass = m;
+    document.getElementById('particleMass').value = settings.particle.mass.toString();
+}
+
+function updateMassExp() {
+    settings.particle.massExp = parseInt(document.getElementById('particleMassExp').value);
+    document.getElementById('particleMassExp').value = settings.particle.massExp.toString();
+}
+
+function updateScale() {
+    var f = parseFloat(document.getElementById('scaleDistance').value);
+    document.getElementById('scaleDistance').value = f.toString();
+    pixelsPerMeter = 100/f;
+}
+
 function mouseDown(e) {
-	
+    if (currentTool == 0) {
+        settings.particle.dropX = e.pageX;
+        settings.particle.dropY = e.pageY;
+        settings.particle.dragging = particleList.length;
+	    addParticle(new particle(settings.particle.mass*Math.pow(10,settings.particle.massExp), settings.particle.charge*Math.pow(10,settings.particle.chargeExp), e.pageX/pixelsPerMeter, e.pageY/pixelsPerMeter));
+	    particleList[particleList.length-1].fixed = true;
+	}
 }
 
 function mouseMove(e) {
-
+    if (currentTool == 0) {
+        if (settings.particle.dragging !== false) {
+            particleList[settings.particle.dragging].x = e.pageX/pixelsPerMeter;
+            particleList[settings.particle.dragging].y = e.pageY/pixelsPerMeter;
+        }
+    }
 }
 
 function mouseUp(e) {
-
+    if (currentTool == 0) {
+        if (settings.particle.dragging !== false) {
+            particleList[settings.particle.dragging].fixed = false;
+            particleList[settings.particle.dragging].vel = new vector([(e.pageX-settings.particle.dropX)/pixelsPerMeter, (e.pageY-settings.particle.dropY)/pixelsPerMeter, 0]); 
+            settings.particle.dragging = false;
+        }
+    }
 }
 
 function touchDown(e) {

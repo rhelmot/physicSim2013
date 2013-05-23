@@ -2,15 +2,30 @@
 
 canvas {
 	outline: none;
-	z-index: -1;
+	z-index: 1;
 	position: absolute;
 }
 
-.controls {
+#controls {
 	position: absolute;
 	left: 20px;
 	top: 20px;
 	text-align: center;
+	z-index: 2;
+}
+
+#scale {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 2;
+    text-align: center;
+}
+
+#measurement {
+    border-left: solid 2px black;
+    border-right: solid 2px black;
+    width: 100px;
 }
 
 .button {

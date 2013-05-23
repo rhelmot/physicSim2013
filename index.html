@@ -5,14 +5,19 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<div class="controls">
-		<a class="button" id="startstop">Run</a> <a class="button" id="step">Step forward</a><br /><br />
-		Tool: <a class="button square" id="tool1"></a>
-		<a class="button square" id="tool2"></a>
-		<a class="button square" id="tool3"></a><br />
+	<div id="controls">
+		<a class="button" id="startstop" onclick="run()">Run</a> <a class="button" id="step" onclick="step(1)">Step forward</a><br /><br />
+		Tool: <a class="button square" id="tool1"><img src="img/particle.png" /></a>
+		<a class="button square" id="tool2"><img src="img/field.png" /></a>
+		<a class="button square" id="tool3"><img src="img/select.png" /></a><br />
 		
 		<div id="opts1" style="display:block;">
-			Add Particle
+			Add Particle<br /><br />
+			Charge (coulombs): <input type="text" id="particleCharge" value="0" style="width: 60px;" onchange="updateCharge()" />
+			x10^<input type="text" id="particleChargeExp" value="0" style="width:40px;" onchange="updateChargeExp()" /><br />
+			Mass (kilograms): <input type="text" id="particleMass" value="1" style="width: 60px;" onchange="updateMass()" /><br />
+			x10^<input type="text" id="particleMassExp" value="0" style="width:40px;" onchange="updateMassExp()" /><br /><br />
+			<a class="button" onclick="clearOffscreen()">Clear offscreen particles</a>
 		</div>
 		
 		<div id="opts2">
@@ -22,5 +27,10 @@
 		<div id="opts3">
 			Select
 		</div>
+	</div>
+	<div id="scale">
+	    Set scale:<br /><br />
+	    The following distance is <input type="text" id="scaleDistance" value="0.025" style="width: 40px;" onchange="updateScale()" /> meters:<br />
+	    <div id="measurement">&nbsp;</div>
 	</div>
 </body></html>
