@@ -30,7 +30,7 @@ var settings = {
 		gravity: false
     },
     select: {
-    
+
     }
 };
 
@@ -180,7 +180,7 @@ function mouseUp(e) {
     if (currentTool == 0) {
         if (settings.particle.dragging !== false) {
             particleList[settings.particle.dragging].fixed = false;
-            particleList[settings.particle.dragging].vel = new vector([(e.pageX-settings.particle.dropX)/pixelsPerMeter, (e.pageY-settings.particle.dropY)/pixelsPerMeter, 0]); 
+            particleList[settings.particle.dragging].vel = new vector([(e.pageX-settings.particle.dropX)/pixelsPerMeter, (e.pageY-settings.particle.dropY)/pixelsPerMeter, 0]);
             settings.particle.dragging = false;
         }
     } else if (currentTool == 1) {
@@ -197,9 +197,10 @@ function touchDown(e) {
 	e.preventDefault();
 	if (activeTouch === false && e.changedTouches.length > 0) {
 		activeTouch = e.changedTouches[0].identifier;
-		mouseDown(e.changedTouches);
+		mouseDown(e.changedTouches[0]);
 	}
 }
+
 
 function touchMove(e) {
 	e.preventDefault();

@@ -10,26 +10,26 @@
 		Tool: <a class="button square selected" id="tool0" onclick="selectTool(0)"><img src="img/particle.png" /></a>
 		<a class="button square" id="tool1" onclick="selectTool(1)"><img src="img/field.png" /></a>
 		<a class="button square" id="tool2" onclick="selectTool(2)"><img src="img/select.png" /></a><br />
-		
+
 		<div id="opts0" style="display:block;">
 			Add Particle<br /><br />
-			Charge (coulombs): <a class="button square" id="chargeSign" onclick="toggleChargeSign()">+</a><input type="text" id="particleCharge" value="0" style="width: 60px;" onchange="updateCharge()" />
-			x10^<input type="text" id="particleChargeExp" value="-6" style="width:40px;" onchange="updateChargeExp()" /><br />
-			Mass (kilograms): <input type="text" id="particleMass" value="1" style="width: 60px;" onchange="updateMass()" />
-			x10^<input type="text" id="particleMassExp" value="0" style="width:40px;" onchange="updateMassExp()" /><br />
-			Radius (meters): <input type="text" id="particleSize" value="2" style="width: 60px;" onchange="updateSize()" />
-			x10^<input type="text" id="particleSizeExp" value="-3" style="width:40px;" onchange="updateSizeExp()" /><br /><br />
+			Charge (coulombs): <a class="button square" id="chargeSign" onclick="toggleChargeSign()">+</a><input type="number" id="particleCharge" value="0" style="width: 60px;" onchange="updateCharge()" />
+			x10^<input type="number" id="particleChargeExp" value="-6" style="width:40px;" onchange="updateChargeExp()" /><br />
+			Mass (kilograms): <input type="number" id="particleMass" value="1" style="width: 60px;" onchange="updateMass()" />
+			x10^<input type="number" id="particleMassExp" value="0" style="width:40px;" onchange="updateMassExp()" /><br />
+			Radius (meters): <input type="number" id="particleSize" value="2" style="width: 60px;" onchange="updateSize()" />
+			x10^<input type="number" id="particleSizeExp" value="-3" style="width:40px;" onchange="updateSizeExp()" /><br /><br />
 			<a class="button" onclick="clearOffscreen()">Clear offscreen particles</a>
 		</div>
-		
+
 		<div id="opts1">
 			Add Field<br /><br />
 			Type: <select id="fieldType" onchange="updateFieldType()">
 				<option value="electrical">Electrical</option>
 				<option value="magnetic">Magnetic</option>
 			</select><br />
-			Strength (<span id="funits">N/C=V/m</span>): <input type="text" id="fieldStrength" value="1" style="width: 60px;" onchange="updateStrength()" />
-			x10^<input type="text" id="fieldStrengthExp" value="0" style="width:40px;" onchange="updateStrengthExp()" /><br /><br />
+			Strength (<span id="funits">N/C=V/m</span>): <input type="number" id="fieldStrength" value="1" style="width: 60px;" onchange="updateStrength()" />
+			x10^<input type="number" id="fieldStrengthExp" value="0" style="width:40px;" onchange="updateStrengthExp()" /><br /><br />
 			Direction:
 			<div id="eDirectionDiv">
 				<!-- canvas deploys here -->
@@ -40,14 +40,14 @@
 			</div><br />
 			<input type="checkbox" id="gravityToggle" onchange="gravityToggle()" /> <label for="gravityToggle">Gravity</label>
 		</div>
-		
+
 		<div id="opts2">
 			Select
 		</div>
 	</div>
 	<div id="scale">
 	    Set scale:<br /><br />
-	    The following distance is <input type="text" id="scaleDistance" value="0.025" style="width: 40px;" onchange="updateScale()" /> meters:<br />
+	    The following distance is <input type="number" id="scaleDistance" value="0.025" style="width: 40px;" onchange="updateScale()" /> meters:<br />
 	    <div id="measurement">&nbsp;</div>
 	</div>
 </body></html>
