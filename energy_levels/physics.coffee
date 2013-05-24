@@ -1,5 +1,5 @@
 
-class Vector:
+class Vector
   constructor: (@comp) ->
 
   add: (other) ->
@@ -31,29 +31,34 @@ light_speed =
   mps: 299792458
   nmps: 299792458e9
 
-class EnergyLevel:
-  constructor: (@energy, @electrons) ->
+class EnergyLevel
+  constructor: (@energy, @electrons=0) ->
 
   @fromWavelength: (lambda) ->
     new EnergyLevel planck_constant.eVs * light_speed.nmps / lambda
 
 
-class Atom:
+class Atom
   constructor: (@levels) ->
+    @levels.sort (a, b) ->
+      if a.energy > b.energy
+        1
+      else if a.energy < b.energy
+        -1
+      else
+        0
 
   addElectron: (level) -> ++@levels[level].electrons
 
   removeElectron: (level) -> --@levels[level].electrons
 
-  incomingPhoton: (energy) ->
-    levelNum = -1
-    @levels.some (level, index) ->
-      if level.energy <= energy:
-        levelNum = index
-        level.electrons--
-        # ACK CHECK # OF ELECTRIONS
-        true
-    levelNum
+  incomingPhoton: (energy, levelFrom) ->
+    out =
+      photonEnergy: energy
+      levelTo: -1
+    if @levels[levelFrom].electrons > 0
+
+    out
 
   incomingPhotonByWavelength: (lambda) ->
     @incomingPhoton planck_constant.eVs * light_speed.nmps / lambda
