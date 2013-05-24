@@ -8,7 +8,7 @@ var killcode;
 var running = false;
 
 window.onload = function () {
-	
+	settings.field.direction = new vector([0, -1, 0]);
 	workplace = new workArea({width: '100%', height: '100%'}, {onmousedown: mouseDown, onmousemove: mouseMove, onmouseup: mouseUp, ontouchdown: touchDown, ontouchmove: touchMove, ontouchup: touchUp});
 	workplace.canvas.id = 'workplace';
 	edirplace = new workArea({width: 150, height: 150}, {onmousedown: mouseDownE, onmousemove: mouseMoveE, onmouseup: mouseUpE, ontouchdown: touchDownE, ontouchmove: touchMoveE, ontouchup: touchUpE}, document.getElementById('eDirectionDiv'));

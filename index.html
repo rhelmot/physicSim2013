@@ -13,8 +13,8 @@
 		
 		<div id="opts0" style="display:block;">
 			Add Particle<br /><br />
-			Charge (coulombs): <input type="text" id="particleCharge" value="0" style="width: 60px;" onchange="updateCharge()" />
-			x10^<input type="text" id="particleChargeExp" value="0" style="width:40px;" onchange="updateChargeExp()" /><br />
+			Charge (coulombs): <a class="button square" id="chargeSign" onclick="toggleChargeSign()">+</a><input type="text" id="particleCharge" value="0" style="width: 60px;" onchange="updateCharge()" />
+			x10^<input type="text" id="particleChargeExp" value="-6" style="width:40px;" onchange="updateChargeExp()" /><br />
 			Mass (kilograms): <input type="text" id="particleMass" value="1" style="width: 60px;" onchange="updateMass()" />
 			x10^<input type="text" id="particleMassExp" value="0" style="width:40px;" onchange="updateMassExp()" /><br /><br />
 			<a class="button" onclick="clearOffscreen()">Clear offscreen particles</a>
@@ -26,17 +26,16 @@
 				<option value="electrical">Electrical</option>
 				<option value="magnetic">Magnetic</option>
 			</select><br />
-			Strength (<span id="funits">N/C=V/m</span>): <input type="text" id="fieldStrength" value="0" style="width: 60px;" onchange="updateStrength()" />
+			Strength (<span id="funits">N/C=V/m</span>): <input type="text" id="fieldStrength" value="1" style="width: 60px;" onchange="updateStrength()" />
 			x10^<input type="text" id="fieldStrengthExp" value="0" style="width:40px;" onchange="updateStrengthExp()" /><br /><br />
-			Direction:<br />
+			Direction:
 			<div id="eDirectionDiv">
 				<!-- canvas deploys here -->
 			</div>
 			<div id="mDirectionDiv" style="display: none;">
-				<input type="radio" name="mDirection" id="mDirectionIn" checked="checked" value="1" /> <label for="mDirectionIn">Into Page</label><br />
-				<input type="radio" name="mDirection" id="mDirectionOut" value="-1" /> <label for="mDirectionOut">Out Of Page</label><br />
+				<input type="radio" name="mDirection" id="mDirectionIn" checked="checked" value="1" onchange="updateMagDir()" /> <label for="mDirectionIn">Into Page</label><br />
+				<input type="radio" name="mDirection" id="mDirectionOut" value="-1" onchange="updateMagDir()" /> <label for="mDirectionOut">Out Of Page</label><br />
 			</div>
-			
 		</div>
 		
 		<div id="opts2">
