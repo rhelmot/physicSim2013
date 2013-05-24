@@ -1,6 +1,7 @@
-function particle (mass, charge, x, y) {
+function particle (mass, charge, x, y, radius) {
 	this.mass = mass;
 	this.charge = charge;		//quantize?
+	this.radius = radius;
 	this.x = x;
 	this.y = y;
 	this.vel = new vector([0,0,0]);
@@ -14,6 +15,9 @@ particle.prototype.applyForce = function (fVector) {
 
 particle.prototype.process = function (dt) {
 	if (!this.fixed) {
+		if (settings.field.gravity) {
+			this.accl = this.accl.add(new vector([0, 9.8, 0]));
+		}
 		this.vel = this.vel.add(this.accl.scale(dt));
 		this.x += this.vel.components[0] * dt;
 		this.y += this.vel.components[1] * dt;
@@ -30,7 +34,7 @@ particle.prototype.draw = function (dest) {
 	} else {
 		color = 'black';
 	}
-	dest.drawDot(this.x*pixelsPerMeter, this.y*pixelsPerMeter, this.mass*10, color, this.fixed);
+	dest.drawDot(this.x*pixelsPerMeter, this.y*pixelsPerMeter, this.radius*pixelsPerMeter, color, this.fixed);
 };
 
 particle.prototype.interact = function (other) {

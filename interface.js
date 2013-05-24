@@ -12,6 +12,8 @@ var settings = {
         chargeSign: 1,
         mass: 1,
         massExp: 0,
+		size: 2,
+		sizeExp: -3,
         dropx: 0,
         dropy: 0,
         dragging: false
@@ -24,7 +26,8 @@ var settings = {
 		dirActive: false,
 		direction: {components: [0, -1, 0]},
 		cropping: false,
-		dragging: false
+		dragging: false,
+		gravity: false
     },
     select: {
     
@@ -47,6 +50,10 @@ function selectTool(tool) {
 	document.getElementById('opts'+currentTool).style.display = 'none';
 	document.getElementById('opts'+tool).style.display = 'block';
 	currentTool = tool;
+}
+
+function gravityToggle() {
+	settings.field.gravity = document.getElementById('gravityToggle').checked;
 }
 
 function updateCharge() {
@@ -80,6 +87,20 @@ function updateMass() {
 function updateMassExp() {
     settings.particle.massExp = parseInt(document.getElementById('particleMassExp').value);
     document.getElementById('particleMassExp').value = settings.particle.massExp.toString();
+}
+
+function updateSize() {
+    var m = parseFloat(document.getElementById('particleSize').value);
+    if (m <= 0) {
+        m = settings.particle.size;
+    }
+    settings.particle.z = size;
+    document.getElementById('particleSize').value = settings.particle.size.toString();
+}
+
+function updateSizeExp() {
+    settings.particle.sizeExp = parseInt(document.getElementById('particleSizeExp').value);
+    document.getElementById('particleSizeExp').value = settings.particle.sizeExp.toString();
 }
 
 function updateScale() {
@@ -129,7 +150,7 @@ function mouseDown(e) {
         settings.particle.dropX = e.pageX;
         settings.particle.dropY = e.pageY;
         settings.particle.dragging = particleList.length;
-	    addParticle(new particle(settings.particle.mass*Math.pow(10,settings.particle.massExp), settings.particle.chargeSign*settings.particle.charge*Math.pow(10,settings.particle.chargeExp), e.pageX/pixelsPerMeter, e.pageY/pixelsPerMeter));
+	    addParticle(new particle(settings.particle.mass*Math.pow(10,settings.particle.massExp), settings.particle.chargeSign*settings.particle.charge*Math.pow(10,settings.particle.chargeExp), e.pageX/pixelsPerMeter, e.pageY/pixelsPerMeter, settings.particle.size*Math.pow(10,settings.particle.sizeExp)));
 	    particleList[particleList.length-1].fixed = true;
 	} else if (currentTool == 1) {
 		if (settings.field.type == 'electrical') {
@@ -170,16 +191,37 @@ function mouseUp(e) {
 	}
 }
 
-function touchDown(e) {
+var activeTouch = false;
 
+function touchDown(e) {
+	e.preventDefault();
+	if (activeTouch === false && e.changedTouches.length > 0) {
+		activeTouch = e.changedTouches[0].identifier;
+		mouseDown(e.changedTouches);
+	}
 }
 
 function touchMove(e) {
-
+	e.preventDefault();
+	if (activeTouch !== false) {
+		for (var i = 0; i < e.changedTouches.length; i++) {
+			if (e.changedTouches[i].identifier == activeTouch) {
+				mouseMove(e.changedTouches[i]);
+			}
+		}
+	}
 }
 
 function touchUp(e) {
-
+	e.preventDefault();
+	if (activeTouch !== false) {
+		for (var i = 0; i < e.changedTouches.length; i++) {
+			if (e.changedTouches[i].identifier == activeTouch) {
+				mouseUp(e.changedTouches[i]);
+				activeTouch = false;
+			}
+		}
+	}
 }
 
 
@@ -192,8 +234,8 @@ function mouseDownE(e) {
 
 function mouseMoveE(e) {
 	if (settings.field.dirActive) {
-		var rx = e.pageX - e.target.offsetLeft;
-		var ry = e.pageY - e.target.offsetTop;
+		var rx = e.pageX - (e.target.offsetLeft + 22);		//+20 for the offset of its parent, +2 for the border
+		var ry = e.pageY - (e.target.offsetTop + 22);
 		settings.field.direction = new vector([rx - 75, ry - 75, 0]).getUnitVector();
 	}
 }
