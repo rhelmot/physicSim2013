@@ -43,6 +43,8 @@ particle.prototype.interact = function (other) {
 	this.applyForce(ev);
 	other.applyForce(ev.scale(-1));
 	var gv = fv.getUnitVector().scale(6.67384e-11*this.mass*other.mass/((fv.components[0]*fv.components[0]) + (fv.components[1]*fv.components[1])))
+	this.applyForce(gv);
+	other.applyForce(gv.scale(-1));
 };
 
 function addParticle(whichParticle) {
