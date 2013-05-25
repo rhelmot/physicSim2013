@@ -4,21 +4,25 @@ function workArea(options, callbacks, dest) {
 	}
 	this.canvas = document.createElement('canvas');
 	this.context = this.canvas.getContext('2d')
+	var dummy = {};
 	var props = {
         left: {bounds:document.body.clientWidth, default: 0, dest: this.canvas.style},
         top: {bounds:document.body.clientHeight, default: 0, dest: this.canvas.style},
         width: {bounds:document.body.clientWidth, default: 650, dest: this.canvas},
-        height: {bounds:document.body.clientHeight, default: 450, dest: this.canvas}
+        height: {bounds:document.body.clientHeight, default: 450, dest: this.canvas},
+        originX: {bounds:document.body.clientWidth, default: 0, dest: dummy},
+        originY: {bounds:document.body.clientHeight, default: 0, dest: dummy}
     };
 	for (var i in props) {
 	    var val = options[i];
 	    if (typeof val == 'undefined') {
 	        val = props[i].default;
 	    } else if (typeof val == 'string' && val[val.length-1] == '%') {
-	        val = props[i].bounds * 100 / parseInt(val);
+	        val = props[i].bounds * parseInt(val) / 100;
 	    }
 	    props[i].dest[i] = val;
 	}
+	this.origin = {x:dummy.originX, y:dummy.originY};
 	this.tpoints = {};
 	this.canvas.onmousedown = callbacks.onmousedown;
 	this.canvas.onmousemove = callbacks.onmousemove;
@@ -29,11 +33,12 @@ function workArea(options, callbacks, dest) {
 	this.canvas.tabIndex = 1;
 	this.canvas.onselectstart = function () { return false; };
 	this.canvas.workArea = this;									//awwww yeah recursion
+	this.context.setTransform(1,0,0,1,this.origin.x,this.origin.y);
 	dest.appendChild(this.canvas);
 }
 
 workArea.prototype.clear = function () {
-    this.context.clearRect(0,0,document.body.clientWidth,document.body.clientHeight);
+    this.context.clearRect(-this.origin.x,-this.origin.y,this.canvas.width,this.canvas.height);
 };
 
 workArea.prototype.transform = function (options) {

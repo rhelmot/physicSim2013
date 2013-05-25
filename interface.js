@@ -94,7 +94,7 @@ function updateSize() {
     if (m <= 0) {
         m = settings.particle.size;
     }
-    settings.particle.z = size;
+    settings.particle.size = m;
     document.getElementById('particleSize').value = settings.particle.size.toString();
 }
 
@@ -107,10 +107,6 @@ function updateScale() {
     var f = parseFloat(document.getElementById('scaleDistance').value);
     document.getElementById('scaleDistance').value = f.toString();
     pixelsPerMeter = 100/f;
-}
-
-function clearOffscreenParticles() {		//TODO: Do this
-
 }
 
 function updateFieldType() {
@@ -147,16 +143,16 @@ function updateMagDir() {
 
 function mouseDown(e) {
     if (currentTool == 0) {
-        settings.particle.dropX = e.pageX;
-        settings.particle.dropY = e.pageY;
+        settings.particle.dropX = e.pageX - workplace.origin.x;
+        settings.particle.dropY = e.pageY - workplace.origin.y;
         settings.particle.dragging = particleList.length;
-	    addParticle(new particle(settings.particle.mass*Math.pow(10,settings.particle.massExp), settings.particle.chargeSign*settings.particle.charge*Math.pow(10,settings.particle.chargeExp), e.pageX/pixelsPerMeter, e.pageY/pixelsPerMeter, settings.particle.size*Math.pow(10,settings.particle.sizeExp)));
+	    addParticle(new particle(settings.particle.mass*Math.pow(10,settings.particle.massExp), settings.particle.chargeSign*settings.particle.charge*Math.pow(10,settings.particle.chargeExp), (e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, settings.particle.size*Math.pow(10,settings.particle.sizeExp)));
 	    particleList[particleList.length-1].fixed = true;
 	} else if (currentTool == 1) {
 		if (settings.field.type == 'electrical') {
-			addField(electricalField(settings.field.direction.scale(settings.field.strength*Math.pow(10, settings.field.strengthExp)),new Rectangle(e.pageX/pixelsPerMeter, e.pageY/pixelsPerMeter, 0, 0, true)));
+			addField(electricalField(settings.field.direction.scale(settings.field.strength*Math.pow(10, settings.field.strengthExp)),new Rectangle((e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, 0, 0, true)));
 		} else {
-		    addField(magneticField(settings.field.magSign*settings.field.strength*Math.pow(10, settings.field.strengthExp), new Rectangle(e.pageX/pixelsPerMeter, e.pageY/pixelsPerMeter, 0, 0, true)));
+		    addField(magneticField(settings.field.magSign*settings.field.strength*Math.pow(10, settings.field.strengthExp), new Rectangle((e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, 0, 0, true)));
 		}
     	settings.field.cropping = fieldList.length-1;
 	}
@@ -165,13 +161,13 @@ function mouseDown(e) {
 function mouseMove(e) {
     if (currentTool == 0) {
         if (settings.particle.dragging !== false) {
-            particleList[settings.particle.dragging].x = e.pageX/pixelsPerMeter;
-            particleList[settings.particle.dragging].y = e.pageY/pixelsPerMeter;
+            particleList[settings.particle.dragging].x = (e.pageX - workplace.origin.x)/pixelsPerMeter;
+            particleList[settings.particle.dragging].y = (e.pageY - workplace.origin.y)/pixelsPerMeter;
         }
     } else if (currentTool == 1) {
 		if (settings.field.cropping !== false) {
-			fieldList[settings.field.cropping].bounds.x2 = e.pageX/pixelsPerMeter;
-			fieldList[settings.field.cropping].bounds.y2 = e.pageY/pixelsPerMeter;
+			fieldList[settings.field.cropping].bounds.x2 = (e.pageX - workplace.origin.x)/pixelsPerMeter;
+			fieldList[settings.field.cropping].bounds.y2 = (e.pageY - workplace.origin.y)/pixelsPerMeter;
 		}
 	}
 }
@@ -180,7 +176,7 @@ function mouseUp(e) {
     if (currentTool == 0) {
         if (settings.particle.dragging !== false) {
             particleList[settings.particle.dragging].fixed = false;
-            particleList[settings.particle.dragging].vel = new vector([(e.pageX-settings.particle.dropX)/pixelsPerMeter, (e.pageY-settings.particle.dropY)/pixelsPerMeter, 0]);
+            particleList[settings.particle.dragging].vel = new vector([(e.pageX - workplace.origin.x - settings.particle.dropX)/pixelsPerMeter, (e.pageY - workplace.origin.y - settings.particle.dropY)/pixelsPerMeter, 0]);
             settings.particle.dragging = false;
         }
     } else if (currentTool == 1) {
@@ -245,14 +241,35 @@ function mouseUpE(e) {
     settings.field.dirActive = false;
 }
 
-function touchDownE(e) {
+var activetouchE = false;
 
+function touchDownE(e) {
+	e.preventDefault();
+	if (activeTouchE === false && e.changedTouches.length > 0) {
+		activeTouchE = e.changedTouches[0].identifier;
+		mouseDownE(e.changedTouches[0]);
+	}
 }
 
-function touchMoveE(e) {
 
+function touchMoveE(e) {
+	e.preventDefault();
+	if (activeTouchE !== false) {
+		for (var i = 0; i < e.changedTouches.length; i++) {
+			if (e.changedTouches[i].identifier == activeTouch) {
+				mouseMoveE(e.changedTouches[i]);
+			}
+		}
+	}
 }
 
 function touchUpE(e) {
-
+	e.preventDefault();
+	if (activeTouchE !== false) {
+		for (var i = 0; i < e.changedTouches.length; i++) {
+			if (e.changedTouches[i].identifier == activeTouchE) {
+				activeTouchE = false;
+			}
+		}
+	}
 }

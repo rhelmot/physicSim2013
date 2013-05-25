@@ -9,7 +9,7 @@ var running = false;
 
 window.onload = function () {
 	settings.field.direction = new vector([0, -1, 0]);
-	workplace = new workArea({width: '100%', height: '100%'}, {onmousedown: mouseDown, onmousemove: mouseMove, onmouseup: mouseUp, ontouchdown: touchDown, ontouchmove: touchMove, ontouchup: touchUp});
+	workplace = new workArea({width: '100%', height: '100%', originX: '50%', originY: '50%'}, {onmousedown: mouseDown, onmousemove: mouseMove, onmouseup: mouseUp, ontouchdown: touchDown, ontouchmove: touchMove, ontouchup: touchUp});
 	workplace.canvas.id = 'workplace';
 	edirplace = new workArea({width: 150, height: 150}, {onmousedown: mouseDownE, onmousemove: mouseMoveE, onmouseup: mouseUpE, ontouchdown: touchDownE, ontouchmove: touchMoveE, ontouchup: touchUpE}, document.getElementById('eDirectionDiv'));
 	edirplace.canvas.style.border = "2px solid black";
@@ -52,3 +52,17 @@ function step(frames) {
 function kill() {
 	clearInterval(killcode);
 }
+
+function clearOffscreenParticles() {		//TODO: Do this
+    var newpart = [];
+    var screen = new Rectangle(-workplace.origin.x/pixelsPerMeter, -workplace.origin.y/pixelsPerMeter, workplace.canvas.width/pixelsPerMeter, workplace.canvas.height/pixelsPerMeter, true);
+    for (var i = 0; i < particleList.length; i++) {
+        if (screen.hitPoint(particleList[i].x, particleList[i].y)) {
+            newpart[newpart.length] = particleList[i];
+        }
+    }
+    particleList = newpart;
+}
+
+setInterval(clearOffscreenParticles, 250);
+
