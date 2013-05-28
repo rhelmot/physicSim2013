@@ -18,9 +18,28 @@ particle.prototype.process = function (dt) {
 		if (settings.field.gravity) {
 			this.accl = this.accl.add(new vector([0, 9.8, 0]));
 		}
-		this.vel = this.vel.add(this.accl.scale(dt));
-		this.x += this.vel.components[0] * dt;
-		this.y += this.vel.components[1] * dt;
+    var verlet = true;
+    if (verlet) {
+      if (typeof this.dt_last === "undefined") {
+        this.dt_last = dt;
+        this.x_last = this.x;
+        this.y_last = this.y;
+        this.x = this.x + this.vel.components[0] * dt;
+        this.y = this.y + this.vel.components[1] * dt;
+        return;
+      }
+      var x_last = this.x;
+      var y_last = this.y;
+      this.x = this.x + (this.x - this.x_last) * (dt / this.dt_last) + (this.accl.components[0] * dt * dt);
+      this.y = this.y + (this.y - this.y_last) * (dt / this.dt_last) + (this.accl.components[1] * dt * dt);
+      this.x_last = x_last;
+      this.y_last = y_last;
+      this.dt_last = dt;
+    } else {
+	  	this.vel = this.vel.add(this.accl.scale(dt));
+	  	this.x += this.vel.components[0] * dt;
+		  this.y += this.vel.components[1] * dt;
+    }
 	}
 	this.accl = new vector([0,0,0]);
 };
