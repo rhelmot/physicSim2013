@@ -52,7 +52,11 @@ workArea.prototype.unTransform = function () {
     this.context.restore();
 };
 
-workArea.prototype.drawArrow = function (fromx, fromy, tox, toy) {
+workArea.prototype.drawArrow = function (fromx, fromy, tox, toy, color) {
+	if (typeof color == 'undefined') {
+		color = 'black';
+	}
+	this.context.strokeStyle = color;
     var headlen = 10;   // length of head in pixels
     var angle = Math.atan2(toy-fromy,tox-fromx);
     this.context.beginPath();

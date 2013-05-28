@@ -16,7 +16,8 @@ var settings = {
 		sizeExp: -3,
         dropx: 0,
         dropy: 0,
-        dragging: false
+        dragging: false,
+		fixed: false
     },
     field: {
         type: 'electrical',
@@ -109,6 +110,10 @@ function updateScale() {
     pixelsPerMeter = 100/f;
 }
 
+function toggleFixed() {
+	settings.particle.fixed = document.getElementById('particleFixed').checked;
+}
+
 function updateFieldType() {
 	var type = document.getElementById('fieldType').value;
 	settings.field.type = type;
@@ -175,7 +180,7 @@ function mouseMove(e) {
 function mouseUp(e) {
     if (currentTool == 0) {
         if (settings.particle.dragging !== false) {
-            particleList[settings.particle.dragging].fixed = false;
+            particleList[settings.particle.dragging].fixed = settings.particle.fixed;
             particleList[settings.particle.dragging].vel = new vector([(e.pageX - workplace.origin.x - settings.particle.dropX)/pixelsPerMeter, (e.pageY - workplace.origin.y - settings.particle.dropY)/pixelsPerMeter, 0]);
             settings.particle.dragging = false;
         }

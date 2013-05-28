@@ -2,6 +2,7 @@
 
 canvas {
 	outline: none;
+	background-color: white;
 }
 
 #workplace {
@@ -15,6 +16,7 @@ canvas {
 	top: 20px;
 	text-align: center;
 	z-index: 2;
+	background-color: rgba(255, 255, 255, 0.5);
 }
 
 #scale {
