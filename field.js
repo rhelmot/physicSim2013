@@ -11,7 +11,6 @@ function electricalField(fieldVector, bounds) {
 	    var fb = this.bounds.normalize();
 		var c = fieldVector.components;
 		var r = new Rectangle(fb.x1*pixelsPerMeter, fb.y1*pixelsPerMeter, fb.x2*pixelsPerMeter, fb.y2*pixelsPerMeter);
-        dest.context.strokeStyle = 'gold';
 		if (c[0] == 0) {
 		    for (var cw = r.x1; cw < r.x2; cw += 40) {
 		        dest.drawArrow(cw, (c[1] < 0)?r.y2:r.y1, cw, (c[1] < 0)?r.y1:r.y2);
@@ -25,16 +24,16 @@ function electricalField(fieldVector, bounds) {
    		    var out;
    		    for (var i = 0.5; out = howLineTouch(r.x1 + normal.components[0]*i, r.y1 + normal.components[1]*i, m, r); i++) {
    		        if (c[0] > 0) {
-   		            dest.drawArrow(out.x1, out.y1, out.x2, out.y2);
+   		            dest.drawArrow(out.x1, out.y1, out.x2, out.y2, 'gold');
    		        } else {
-   		            dest.drawArrow(out.x2, out.y2, out.x1, out.y1);
+   		            dest.drawArrow(out.x2, out.y2, out.x1, out.y1, 'gold');
    		        }
    		    }
    		    for (var i = -0.5; out = howLineTouch(r.x1 + normal.components[0]*i, r.y1 + normal.components[1]*i, m, r); i--) {
    		        if (c[0] > 0) {
-   		            dest.drawArrow(out.x1, out.y1, out.x2, out.y2);
+   		            dest.drawArrow(out.x1, out.y1, out.x2, out.y2, 'gold');
    		        } else {
-   		            dest.drawArrow(out.x2, out.y2, out.x1, out.y1);
+   		            dest.drawArrow(out.x2, out.y2, out.x1, out.y1, 'gold');
    		        }
    		    }
 		}

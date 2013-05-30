@@ -40,6 +40,8 @@ function run() {
     running = !running;
     document.getElementById('startstop').innerHTML = running?"Pause":"Run";
     document.getElementById('step').disabled = running;
+	document.getElementById('notrunning').style.display = running?"none":"block";
+	document.getElementById('running').style.display = running?"block":"none";
 }
 
 function selectTool(tool) {
@@ -55,6 +57,45 @@ function selectTool(tool) {
 
 function gravityToggle() {
 	settings.field.gravity = document.getElementById('gravityToggle').checked;
+}
+
+function expNumber(number) {
+	var abs = Math.abs(number);
+	this.sign = number/abs;
+	if (abs == 0) {
+		this.base = 0;
+		this.exp = 0;
+	} else {
+		var log = Math.floor(Math.log(abs)/Math.log(10));
+		this.exp = log;
+		this.base = abs*Math.pow(10, -log);
+	}
+}
+
+expNumber.prototype.getVal = function () {
+	return this.sign * this.base * Math.pow(10, this.exp);
+}
+
+function inputField(dest, options) {
+	var div = document.createElement('div');
+	this.value = options.value;
+	div.appendChild(document.createTextNode(options.name + ' (' + options.units + '): '));
+	if (options.canBeNegative) {
+		var sign = document.createElement('a');
+		a.className = 'button square';
+		a.innerHTML = (options.value.sign < 0)?'-':'+';
+		a.owner = this;
+		a.onclick = function () {
+			this.owner.value.sign = -this.owner.value.sign;
+			this.innerHTML = (this.owner.value.sign < 0)?'-':'+';
+		}
+		div.appendChild(sign);
+	}
+	var root = document.createElement('input');
+	root.type = 'number';
+	root.style.width = 60;
+	
+	
 }
 
 function updateCharge() {
@@ -156,7 +197,7 @@ function mouseDown(e) {
 		particleList[particleList.length-1].dragging = true;
 	} else if (currentTool == 1) {
 		if (settings.field.type == 'electrical') {
-			addField(electricalField(settings.field.direction.scale(settings.field.strength*Math.pow(10, settings.field.strengthExp)),new Rectangle((e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, 0, 0, true)));
+			addField(electricalField(settings.field.direction.direction.scale(settings.field.strength*Math.pow(10, settings.field.strengthExp)),new Rectangle((e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, 0, 0, true)));
 		} else {
 		    addField(magneticField(settings.field.magSign*settings.field.strength*Math.pow(10, settings.field.strengthExp), new Rectangle((e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, 0, 0, true)));
 		}
@@ -238,53 +279,67 @@ function touchUp(e) {
 
 
 
+function dirCanvas (dest) {
+	
+	this.active = false;
+	this.owner = this;
+	this.direction = new vector([0,-1,0]);
+	this.mouseDownE = function (e) {
+		this.owner.active = true;
+		this.owner.mouseMoveE(e);
+	};
 
-function mouseDownE(e) {
-    settings.field.dirActive = true;
-	mouseMoveE(e);
-}
+	this.mouseMoveE = function (e) {
+		if (this.owner.active) {
+			var rx = e.pageX - (e.target.offsetLeft + 22);		//+20 for the offset of its parent, +2 for the border
+			var ry = e.pageY - (e.target.offsetTop + 22);
+			this.owner.direction = new vector([rx - 75, ry - 75, 0]).getUnitVector();
+		}
+	};
 
-function mouseMoveE(e) {
-	if (settings.field.dirActive) {
-		var rx = e.pageX - (e.target.offsetLeft + 22);		//+20 for the offset of its parent, +2 for the border
-		var ry = e.pageY - (e.target.offsetTop + 22);
-		settings.field.direction = new vector([rx - 75, ry - 75, 0]).getUnitVector();
-	}
-}
+	this.mouseUpE = function (e) {
+		this.owner.active = false;
+	};
 
-function mouseUpE(e) {
-    settings.field.dirActive = false;
-}
+	this.activetouchE = false;
 
-var activetouchE = false;
-
-function touchDownE(e) {
-	e.preventDefault();
-	if (activeTouchE === false && e.changedTouches.length > 0) {
-		activeTouchE = e.changedTouches[0].identifier;
-		mouseDownE(e.changedTouches[0]);
-	}
-}
+	this.touchDownE = function (e) {
+		e.preventDefault();
+		if (this.owner.activeTouchE === false && e.changedTouches.length > 0) {
+			this.owner.activeTouchE = e.changedTouches[0].identifier;
+			this.owner.mouseDownE(e.changedTouches[0]);
+		}
+	};
 
 
-function touchMoveE(e) {
-	e.preventDefault();
-	if (activeTouchE !== false) {
-		for (var i = 0; i < e.changedTouches.length; i++) {
-			if (e.changedTouches[i].identifier == activeTouch) {
-				mouseMoveE(e.changedTouches[i]);
+	this.touchMoveE = function (e) {
+		e.preventDefault();
+		if (this.owner.activeTouchE !== false) {
+			for (var i = 0; i < e.changedTouches.length; i++) {
+				if (e.changedTouches[i].identifier == this.owner.activeTouch) {
+					this.owner.mouseMoveE(e.changedTouches[i]);
+				}
 			}
 		}
-	}
-}
+	};
 
-function touchUpE(e) {
-	e.preventDefault();
-	if (activeTouchE !== false) {
-		for (var i = 0; i < e.changedTouches.length; i++) {
-			if (e.changedTouches[i].identifier == activeTouchE) {
-				activeTouchE = false;
+	this.touchUpE = function (e) {
+		e.preventDefault();
+		if (this.owner.activeTouchE !== false) {
+			for (var i = 0; i < e.changedTouches.length; i++) {
+				if (e.changedTouches[i].identifier == this.owner.activeTouchE) {
+					this.owner.activeTouchE = false;
+				}
 			}
 		}
+	};
+	
+	this.area = new workArea({width: 150, height: 150}, {onmousedown: this.mouseDownE, onmousemove: this.mouseMoveE, onmouseup: this.mouseUpE, ontouchdown: this.touchDownE, ontouchmove: this.touchMoveE, ontouchup: this.touchUpE}, dest);
+	this.area.style = 'solid 2px black';
+	this.area.canvas.owner = this;
+	
+	this.draw = function () {
+		this.area.clear();
+		this.area.drawArrow(75,75,75+this.direction.components[0]*70,75+this.direction.components[1]*70);
 	}
 }

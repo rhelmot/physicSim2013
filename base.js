@@ -8,15 +8,12 @@ var killcode;
 var running = false;
 
 window.onload = function () {
-	settings.field.direction = new vector([0, -1, 0]);
+	settings.field.direction = new dirCanvas(document.getElementById('eDirectionDiv'));
 	workplace = new workArea({width: '100%', height: '100%', originX: '50%', originY: '50%'}, {onmousedown: mouseDown, onmousemove: mouseMove, onmouseup: mouseUp, ontouchdown: touchDown, ontouchmove: touchMove, ontouchup: touchUp});
 	workplace.canvas.id = 'workplace';
-	edirplace = new workArea({width: 150, height: 150}, {onmousedown: mouseDownE, onmousemove: mouseMoveE, onmouseup: mouseUpE, ontouchdown: touchDownE, ontouchmove: touchMoveE, ontouchup: touchUpE}, document.getElementById('eDirectionDiv'));
-	edirplace.canvas.style.border = "2px solid black";
 	killcode = setInterval(function () {							//MAIN LOOP
 		workplace.clear();
-		edirplace.clear();
-		edirplace.drawArrow(75,75,75+settings.field.direction.components[0]*70,75+settings.field.direction.components[1]*70);
+		settings.field.direction.draw();
 		if (running) {
 			step(1);
 		}
