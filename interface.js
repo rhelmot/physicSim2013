@@ -152,7 +152,8 @@ function mouseDown(e) {
         settings.particle.dropY = e.pageY - workplace.origin.y;
         settings.particle.dragging = particleList.length;
 	    addParticle(new particle(settings.particle.mass*Math.pow(10,settings.particle.massExp), settings.particle.chargeSign*settings.particle.charge*Math.pow(10,settings.particle.chargeExp), (e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, settings.particle.size*Math.pow(10,settings.particle.sizeExp)));
-	    particleList[particleList.length-1].fixed = true;
+	    particleList[particleList.length-1].fixed = settings.particle.fixed;
+		particleList[particleList.length-1].dragging = true;
 	} else if (currentTool == 1) {
 		if (settings.field.type == 'electrical') {
 			addField(electricalField(settings.field.direction.scale(settings.field.strength*Math.pow(10, settings.field.strengthExp)),new Rectangle((e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, 0, 0, true)));
@@ -160,6 +161,15 @@ function mouseDown(e) {
 		    addField(magneticField(settings.field.magSign*settings.field.strength*Math.pow(10, settings.field.strengthExp), new Rectangle((e.pageX - workplace.origin.x)/pixelsPerMeter, (e.pageY - workplace.origin.y)/pixelsPerMeter, 0, 0, true)));
 		}
     	settings.field.cropping = fieldList.length-1;
+	} else {
+		if (running) {
+			for (var i = 0; i < particleList.length; i++) {
+				if (new Rectangle(particleList[i].x-particleList[i].radius, particleList[i].y-particleList[i].radius, particleList[i].radius*2, particleList[i].radius*2, true)
+				  .hitPoint((e.pageX-workplace.origin.x)/pixelsPerMeter, (e.pageY-workplace.origin.y)/pixelsPerMeter)) {
+					
+				}
+			}
+		}
 	}
 }
 
@@ -180,8 +190,8 @@ function mouseMove(e) {
 function mouseUp(e) {
     if (currentTool == 0) {
         if (settings.particle.dragging !== false) {
-            particleList[settings.particle.dragging].fixed = settings.particle.fixed;
             particleList[settings.particle.dragging].vel = new vector([(e.pageX - workplace.origin.x - settings.particle.dropX)/pixelsPerMeter, (e.pageY - workplace.origin.y - settings.particle.dropY)/pixelsPerMeter, 0]);
+			particleList[settings.particle.dragging].dragging = false;
             settings.particle.dragging = false;
         }
     } else if (currentTool == 1) {

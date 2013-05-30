@@ -42,7 +42,29 @@
 		</div>
 
 		<div id="opts2">
-			Select
+			Select<br /><br />
+			<div id="notrunning">
+				<div id="noneselected">Select a particle or field to make changes...</div>
+				<div id="particleselected" style="display:none;">
+					xpos
+					ypos
+					vel magnitude
+					vel direction (picker)
+					charge
+					mass
+					radius
+					fixed
+				</div>
+				<div id="fieldselected" style="display:none;">
+					xpos
+					ypos
+					width
+					height
+					strength
+					direction (picker/inout)
+				</div>
+			</div>
+			<div id="running" style="display:none;">Pause the simulation to select and modify particles!</div>
 		</div>
 	</div>
 	<div id="scale">

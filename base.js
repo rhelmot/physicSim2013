@@ -24,6 +24,9 @@ window.onload = function () {
 			fieldList[i].draw(workplace);
 		}
 		for (var i = 0; i < particleList.length; i++) {
+			if (particleList[i].dragging && !settings.particle.dragging) {
+				particleList[i].dragging = false;
+			}
 			particleList[i].draw(workplace);
 		}
 		if (settings.particle.dragging !== false) {
@@ -59,6 +62,9 @@ function clearOffscreenParticles() {		//TODO: Do this
     for (var i = 0; i < particleList.length; i++) {
         if (screen.hitPoint(particleList[i].x, particleList[i].y)) {
             newpart[newpart.length] = particleList[i];
+			if (i === settings.particle.dragging) {
+				settings.particle.dragging = newpart.length - 1;
+			}
         }
     }
     particleList = newpart;

@@ -7,6 +7,7 @@ function particle (mass, charge, x, y, radius) {
 	this.vel = new vector([0,0,0]);
 	this.accl = new vector([0,0,0]);
 	this.fixed = false;
+	this.dragging = false;
 }
 
 particle.prototype.applyForce = function (fVector) {
@@ -14,7 +15,7 @@ particle.prototype.applyForce = function (fVector) {
 };
 
 particle.prototype.process = function (dt) {
-	if (!this.fixed) {
+	if (!(this.fixed || this.dragging)) {
 		if (settings.field.gravity) {
 			this.accl = this.accl.add(new vector([0, 9.8, 0]));
 		}
@@ -39,7 +40,7 @@ particle.prototype.draw = function (dest) {
 
 particle.prototype.interact = function (other) {
 	var fv = new vector([this.x - other.x, this.y - other.y, 0]);
-	if (fv.getMagnitude() < (this.radius + other.radius)) {     //collision!
+	if (fv.getMagnitude() < (this.radius + other.radius) && !this.dragging && !other.dragging) {     //collision!
 	    this.vel = new vector([ ((this.mass*this.vel.components[0])+(other.mass*other.vel.components[0])) / (this.mass + other.mass),
 	                            ((this.mass*this.vel.components[1])+(other.mass*other.vel.components[1])) / (this.mass + other.mass), 0]);     //conservation of momentum
 	    this.radius += other.radius;        //should probably be changed
