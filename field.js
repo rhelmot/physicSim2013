@@ -5,7 +5,7 @@ function field(processFunction, bounds, drawFunction) {
 }
 
 function electricalField(fieldVector, bounds) {
-	return new field(function (particle) {
+	var a = new field(function (particle) {
 		particle.applyForce(fieldVector.scale(particle.charge));
 	}, bounds, function (dest) {
 	    var fb = this.bounds.normalize();
@@ -38,6 +38,8 @@ function electricalField(fieldVector, bounds) {
    		    }
 		}
 	});
+	a.vector = fieldVector;
+	return a;
 }
 
 function lingen(x, y, m) {
@@ -83,8 +85,8 @@ function gravitationalField() {
 }
 
 function magneticField(strength, bounds) {			// into the page, positive. Out of the page, negative. This is not a 3D simulator.
-	return new field(function (particle) {
-		particle.applyForce(particle.vel.cross(new vector([0, 0, strength])).scale(particle.charge));
+	a = new field(function (particle) {
+		particle.applyForce(particle.vel.cross(this.vector.scale(particle.charge)));
 	}, bounds, function (dest) {
 	    var fb = this.bounds.normalize();
 		for (var ch = fb.y1; ch < fb.y2; ch += 30/pixelsPerMeter) {
@@ -93,6 +95,7 @@ function magneticField(strength, bounds) {			// into the page, positive. Out of 
 			}
 		}
 	});
+	a.vector = new vector([0, 0, strength]);
 }
 
 function Rectangle(x1, y1, x2, y2, usesizes) {
