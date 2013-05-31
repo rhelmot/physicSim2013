@@ -13,7 +13,7 @@ function electricalField(fieldVector, bounds) {
 		var r = new Rectangle(fb.x1*pixelsPerMeter, fb.y1*pixelsPerMeter, fb.x2*pixelsPerMeter, fb.y2*pixelsPerMeter);
 		if (c[0] == 0) {
 		    for (var cw = r.x1; cw < r.x2; cw += 40) {
-		        dest.drawArrow(cw, (c[1] < 0)?r.y2:r.y1, cw, (c[1] < 0)?r.y1:r.y2);
+		        dest.drawArrow(cw, (c[1] < 0)?r.y2:r.y1, cw, (c[1] < 0)?r.y1:r.y2, 'gold');
 		    }
 		} else {
 		    var m = c[1]/c[0];

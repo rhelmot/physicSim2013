@@ -13,32 +13,10 @@
 
 		<div id="opts0" style="display:block;">
 			Add Particle<br /><br />
-			Charge (coulombs): <a class="button square" id="chargeSign" onclick="toggleChargeSign()">+</a><input type="number" id="particleCharge" value="0" style="width: 60px;" onchange="updateCharge()" />
-			x10^<input type="number" id="particleChargeExp" value="-6" style="width:40px;" onchange="updateChargeExp()" /><br />
-			Mass (kilograms): <input type="number" id="particleMass" value="1" style="width: 60px;" onchange="updateMass()" />
-			x10^<input type="number" id="particleMassExp" value="0" style="width:40px;" onchange="updateMassExp()" /><br />
-			Radius (meters): <input type="number" id="particleSize" value="2" style="width: 60px;" onchange="updateSize()" />
-			x10^<input type="number" id="particleSizeExp" value="-3" style="width:40px;" onchange="updateSizeExp()" /><br />
-			<label><input type="checkbox" id="particleFixed" onchange="toggleFixed()" /> Fixed</label>
 		</div>
 
 		<div id="opts1">
-			Add Field<br /><br />
-			Type: <select id="fieldType" onchange="updateFieldType()">
-				<option value="electrical">Electrical</option>
-				<option value="magnetic">Magnetic</option>
-			</select><br />
-			Strength (<span id="funits">N/C=V/m</span>): <input type="number" id="fieldStrength" value="1" style="width: 60px;" onchange="updateStrength()" />
-			x10^<input type="number" id="fieldStrengthExp" value="0" style="width:40px;" onchange="updateStrengthExp()" /><br /><br />
-			Direction:
-			<div id="eDirectionDiv">
-				<!-- canvas deploys here -->
-			</div>
-			<div id="mDirectionDiv" style="display: none;">
-				<input type="radio" name="mDirection" id="mDirectionIn" checked="checked" value="1" onchange="updateMagDir()" /> <label for="mDirectionIn">Into Page</label><br />
-				<input type="radio" name="mDirection" id="mDirectionOut" value="-1" onchange="updateMagDir()" /> <label for="mDirectionOut">Out Of Page</label><br />
-			</div><br />
-			<input type="checkbox" id="gravityToggle" onchange="gravityToggle()" /> <label for="gravityToggle">Gravity</label>
+			Add Field<br />
 		</div>
 
 		<div id="opts2">

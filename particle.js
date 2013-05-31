@@ -16,7 +16,7 @@ particle.prototype.applyForce = function (fVector) {
 
 particle.prototype.process = function (dt) {
 	if (!(this.fixed || this.dragging)) {
-		if (settings.field.gravity) {
+		if (settings.field.gravity.state) {
 			this.accl = this.accl.add(new vector([0, 9.8, 0]));
 		}
 		this.vel = this.vel.add(this.accl.scale(dt));

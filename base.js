@@ -8,12 +8,11 @@ var killcode;
 var running = false;
 
 window.onload = function () {
-	settings.field.direction = new dirCanvas(document.getElementById('eDirectionDiv'));
-	workplace = new workArea({width: '100%', height: '100%', originX: '50%', originY: '50%'}, {onmousedown: mouseDown, onmousemove: mouseMove, onmouseup: mouseUp, ontouchdown: touchDown, ontouchmove: touchMove, ontouchup: touchUp});
-	workplace.canvas.id = 'workplace';
+    generateInterface();
+	
 	killcode = setInterval(function () {							//MAIN LOOP
 		workplace.clear();
-		settings.field.direction.draw();
+		settings.field.electrical.direction.draw();
 		if (running) {
 			step(1);
 		}
@@ -21,7 +20,7 @@ window.onload = function () {
 			fieldList[i].draw(workplace);
 		}
 		for (var i = 0; i < particleList.length; i++) {
-			if (particleList[i].dragging && !settings.particle.dragging) {
+			if (particleList[i].dragging && settings.particle.dragging === false) {
 				particleList[i].dragging = false;
 			}
 			particleList[i].draw(workplace);
@@ -53,7 +52,7 @@ function kill() {
 	clearInterval(killcode);
 }
 
-function clearOffscreenParticles() {		//TODO: Do this
+function clearOffscreenParticles() {
     var newpart = [];
     var screen = new Rectangle(-workplace.origin.x/pixelsPerMeter, -workplace.origin.y/pixelsPerMeter, workplace.canvas.width/pixelsPerMeter, workplace.canvas.height/pixelsPerMeter, true);
     for (var i = 0; i < particleList.length; i++) {
