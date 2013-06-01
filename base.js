@@ -13,6 +13,8 @@ window.onload = function () {
 	killcode = setInterval(function () {							//MAIN LOOP
 		workplace.clear();
 		settings.field.electrical.direction.draw();
+		settings.select.particle.velt.draw();
+		settings.select.field.electrical.direction.draw();
 		if (running) {
 			step(1);
 		}

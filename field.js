@@ -6,10 +6,10 @@ function field(processFunction, bounds, drawFunction) {
 
 function electricalField(fieldVector, bounds) {
 	var a = new field(function (particle) {
-		particle.applyForce(fieldVector.scale(particle.charge));
+		particle.applyForce(this.vector.scale(particle.charge));
 	}, bounds, function (dest) {
 	    var fb = this.bounds.normalize();
-		var c = fieldVector.components;
+		var c = this.vector.components;
 		var r = new Rectangle(fb.x1*pixelsPerMeter, fb.y1*pixelsPerMeter, fb.x2*pixelsPerMeter, fb.y2*pixelsPerMeter);
 		if (c[0] == 0) {
 		    for (var cw = r.x1; cw < r.x2; cw += 40) {
@@ -17,7 +17,7 @@ function electricalField(fieldVector, bounds) {
 		    }
 		} else {
 		    var m = c[1]/c[0];
-		    var normal = fieldVector.getUnitVector().scale(40);
+		    var normal = this.vector.getUnitVector().scale(40);
    		    var temp = normal.components[0];
    		    normal.components[0] = normal.components[1];
    		    normal.components[1] = -temp;
@@ -91,11 +91,12 @@ function magneticField(strength, bounds) {			// into the page, positive. Out of 
 	    var fb = this.bounds.normalize();
 		for (var ch = fb.y1; ch < fb.y2; ch += 30/pixelsPerMeter) {
 			for (var cw = fb.x1; cw < fb.x2; cw += 30/pixelsPerMeter) {
-			    (strength>0)?(dest.drawX(cw*pixelsPerMeter, ch*pixelsPerMeter, 7, 'blue')):(dest.drawDot(cw*pixelsPerMeter, ch*pixelsPerMeter, 3, 'blue'));
+			    (this.vector.components[2]>0)?(dest.drawX(cw*pixelsPerMeter, ch*pixelsPerMeter, 7, 'blue')):(dest.drawDot(cw*pixelsPerMeter, ch*pixelsPerMeter, 3, 'blue'));
 			}
 		}
 	});
 	a.vector = new vector([0, 0, strength]);
+	return a;
 }
 
 function Rectangle(x1, y1, x2, y2, usesizes) {
