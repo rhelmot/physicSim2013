@@ -13,17 +13,50 @@ particle.prototype.applyForce = function (fVector) {
 	this.accl = this.accl.add(fVector.scale(1/this.mass));
 };
 
+var evaluateForRK4 = function(initialState, dt, d, accel) {
+  var state = {x: initialState.x + d.dx * dt, v: initialState.v + d.dv * dt};
+  var out = {dx: state.v, dv: accel};
+  return out;
+}
+
+var calcRK4 = function(state, dt, accl) {
+  var a = evaluateForRK4(state, 0.0, {dx: 0.0, dv: 0.0}, accl);
+  var b = evaluateForRK4(state, 0.5*dt, a, accl);
+  var c = evaluateForRK4(state, 0.5*dt, b, accl);
+  var d = evaluateForRK4(state, dt, c, accl);
+
+  var dxdt = 1.0/6.0 * (a.dx + 2.0*(b.dx + c.dx) + d.dx);
+  var dvdt = 1.0/6.0 * (a.dv + 2.0*(b.dv + c.dv) + d.dv);
+
+  return {x: state.x + dxdt * dt, v: state.v + dvdt * dt};
+}
+
 particle.prototype.process = function (dt) {
 	if (!this.fixed) {
 		if (settings.field.gravity) {
 			this.accl = this.accl.add(new vector([0, 9.8, 0]));
 		}
+    var rk4 = false;
     var verlet = true;
-    if (verlet) {
+    if (rk4) {
+      var stateX = {x: this.x, v: this.vel.components[0]};
+      var newState = calcRK4(stateX, dt, this.accl.components[0]);
+      this.x = newState.x;
+      this.vel.components[0] = newState.v;
+
+      var stateY = {x: this.y, v: this.vel.components[1]};
+      var newState = calcRK4(stateY, dt, this.accl.components[1]);
+      this.y = newState.x;
+      this.vel.components[1] = newState.v;
+
+
+    } else if (verlet) {
       if (typeof this.dt_last === "undefined") {
         this.dt_last = dt;
         this.x_last = this.x;
         this.y_last = this.y;
+        this.ax_last = this.accl.components[0];
+        this.ay_last = this.accl.components[1];
         this.x = this.x + this.vel.components[0] * dt;
         this.y = this.y + this.vel.components[1] * dt;
         return;
@@ -34,6 +67,10 @@ particle.prototype.process = function (dt) {
       this.y = this.y + (this.y - this.y_last) * (dt / this.dt_last) + (this.accl.components[1] * dt * dt);
       this.x_last = x_last;
       this.y_last = y_last;
+      this.vel.components[0] = this.vel.components[0] + 0.5 * (this.ax_last + this.accl.components[0]) * dt;
+      this.vel.components[1] = this.vel.components[1] + 0.5 * (this.ay_last + this.accl.components[1]) * dt;
+      this.ax_last = this.accl.components[0];
+      this.ay_last = this.accl.components[1];
       this.dt_last = dt;
     } else {
 	  	this.vel = this.vel.add(this.accl.scale(dt));
