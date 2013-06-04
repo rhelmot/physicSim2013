@@ -37,8 +37,8 @@ particle.prototype.process = function (dt) {
 		if (settings.field.gravity.state) {
 			this.accl = this.accl.add(new vector([0, 9.8, 0]));
 		}
-    var rk4 = false;
-    var verlet = true;
+    var rk4 = true;
+    var verlet = false;
     if (rk4) {
       var stateX = {x: this.x, v: this.vel.components[0]};
       var newState = calcRK4(stateX, dt, this.accl.components[0]);
@@ -97,15 +97,28 @@ particle.prototype.draw = function (dest) {
 particle.prototype.interact = function (other) {
 	var fv = new vector([this.x - other.x, this.y - other.y, 0]);
 	if (fv.getMagnitude() < (this.radius + other.radius) && !this.dragging && !other.dragging) {     //collision!
-	    this.vel = new vector([ ((this.mass*this.vel.components[0])+(other.mass*other.vel.components[0])) / (this.mass + other.mass),
-	                            ((this.mass*this.vel.components[1])+(other.mass*other.vel.components[1])) / (this.mass + other.mass), 0]);     //conservation of momentum
-	    this.radius += other.radius;        //should probably be changed
+      if (this.fixed || other.fixed) {
+          this.vel = new vector([0, 0, 0]);
+      } else {
+	        this.vel = new vector([ ((this.mass*this.vel.components[0])+(other.mass*other.vel.components[0])) / (this.mass + other.mass),
+	                                ((this.mass*this.vel.components[1])+(other.mass*other.vel.components[1])) / (this.mass + other.mass), 0]);     //conservation of momentum
+      }
+      //this.radius += other.radius;
+	    this.radius = Math.sqrt(this.radius * this.radius + other.radius * other.radius); // changed to adding areas
 	    this.mass += other.mass;            //conservation of mass
 	    this.charge += other.charge;        //conservation of charge
-	    this.x += other.x;
-	    this.x /= 2;
-	    this.y += other.y;                  //set position to mean position... should it just be point of collision?
-	    this.y /= 2;
+      if (this.fixed) {
+
+      } else if (other.fixed) {
+          this.fixed = true;
+          this.x = other.x;
+          this.y = other.y;
+      } else {
+	        this.x += other.x;
+	        this.x /= 2;
+	        this.y += other.y;                  //set position to mean position... should it just be point of collision?
+	        this.y /= 2;
+      }
 	    //acceleration..?
 	    other.x = -1e6;
 	    other.y = -1e6;
@@ -115,8 +128,8 @@ particle.prototype.interact = function (other) {
 	    this.applyForce(ev);
 	    other.applyForce(ev.scale(-1));
 	    var gv = fv.getUnitVector().scale(6.67384e-11*this.mass*other.mass/((fv.components[0]*fv.components[0]) + (fv.components[1]*fv.components[1])))
-	    this.applyForce(gv);
-	    other.applyForce(gv.scale(-1));
+	    this.applyForce(gv.scale(-1));
+	    other.applyForce(gv);
 	}
 };
 
