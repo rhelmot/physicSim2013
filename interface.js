@@ -102,7 +102,7 @@ function generateInterface() {
 	var sDestMag = document.createElement('div');
 	settings.select.field.magnetic.strength = new inputField(sDestMag, {label: 'Strength', units: 'teslas', canBeNegative: false, canBeZero: false, value: new expNumber(1), onchange: function (v) {
 		settings.select.field.selected.vector.components[2] /= Math.abs(settings.select.field.selected.vector.components[2]);
-		settings.select.field.selected.vector.componetns[2] *= v;
+		settings.select.field.selected.vector.components[2] *= v;
 	}});
 	settings.select.field.magnetic.direction = new optionField(sDestMag, {label: 'Direction', options: ['Into Page', 'Out of Page'], value: 0, type: 'radio', onchange: function (v) {
 		settings.select.field.selected.vector.components[2] = Math.abs(settings.select.field.selected.vector.components[2]) * (v-0.5) * -2;
@@ -154,6 +154,11 @@ function run() {
     document.getElementById('step').disabled = running;
 	document.getElementById('notrunning').style.display = running?"none":"block";
 	document.getElementById('running').style.display = running?"block":"none";
+	if (settings.select.particle.selected) {
+		updateSelectFields(settings.select.particle.selected);
+	} else if (settings.select.field.selected) {
+		updateSelectFields(settings.selected.field.selected);
+	}
 }
 
 function selectTool(tool) {
@@ -439,7 +444,36 @@ function updateScale() {
     pixelsPerMeter = 100/f;
 }
 
-
+function updateSelectFields(p) {
+	if (p.bounds) {
+		settings.select.field.x.setValue(p.bounds.x1);
+		settings.select.field.y.setValue(-p.bounds.y1);
+		settings.select.field.width.setValue(p.bounds.width);
+		settings.select.field.height.setValue(p.bounds.height);
+		if (!p.vector.components[2]) {
+			document.getElementById('selectMagneticField').style.display = 'none';
+			document.getElementById('selectElectricalField').style.display = 'block';
+			settings.select.field.electrical.strength.setValue(p.vector.getMagnitude());
+			settings.select.field.electrical.direction.direction = p.vector.getUnitVector();
+		} else {
+			document.getElementById('selectMagneticField').style.display = 'block';
+			document.getElementById('selectElectricalField').style.display = 'none';
+			settings.select.field.magnetic.strength.setValue(Math.abs(p.vector.components[2]));
+			settings.select.field.magnetic.direction.setValue(p.vector.components[2] > 0 ? 0 : 1);
+		}
+	} else {
+		settings.select.particle.x.setValue(p.x);
+		settings.select.particle.y.setValue(-p.y);
+		settings.select.particle.velx.setValue(p.vel.components[0]);
+		settings.select.particle.vely.setValue(-p.vel.components[1]);
+		settings.select.particle.velr.setValue(p.vel.getMagnitude());
+		settings.select.particle.velt.direction = new vector([p.vel.components[0], p.vel.components[1], 0]).getUnitVector();
+		settings.select.particle.mass.setValue(p.mass);
+		settings.select.particle.radius.setValue(p.radius);
+		settings.select.particle.charge.setValue(p.charge);
+		settings.select.particle.fixed.setValue(p.fixed);
+	}
+}
 
 function mouseDown(e) {
     if (currentTool == 0) {
@@ -466,16 +500,11 @@ function mouseDown(e) {
 					document.getElementById('fieldSelected').style.display = 'none';
 					settings.select.particle.selected = particleList[i];
 					settings.select.field.selected = false;
-					settings.select.particle.x.setValue(particleList[i].x);
-					settings.select.particle.y.setValue(-particleList[i].y);
-					settings.select.particle.velx.setValue(particleList[i].vel.components[0]);
-					settings.select.particle.vely.setValue(-particleList[i].vel.components[1]);
-					settings.select.particle.velr.setValue(particleList[i].vel.getMagnitude());
-					settings.select.particle.velt.direction = new vector([particleList[i].vel.components[0], particleList[i].vel.components[1], 0]).getUnitVector();
-					settings.select.particle.mass.setValue(particleList[i].mass);
-					settings.select.particle.radius.setValue(particleList[i].radius);
-					settings.select.particle.charge.setValue(particleList[i].charge);
-					settings.select.particle.fixed.setValue(particleList[i].fixed);
+					settings.select.particle.dropX = particleList[i].x - ((e.pageX-workplace.origin.x)/pixelsPerMeter);
+					settings.select.particle.dropY = particleList[i].y - ((e.pageY-workplace.origin.y)/pixelsPerMeter);
+					settings.select.dragging = true;
+					particleList[i].dragging = true;
+					updateSelectFields(particleList[i]);
 					return;
 				}
 			}
@@ -486,21 +515,10 @@ function mouseDown(e) {
 					document.getElementById('fieldSelected').style.display = 'block';
 					settings.select.particle.selected = false;
 					settings.select.field.selected = fieldList[i];
-					settings.select.field.x.setValue(fieldList[i].bounds.x1);
-					settings.select.field.y.setValue(-fieldList[i].bounds.y1);
-					settings.select.field.width.setValue(fieldList[i].bounds.width);
-					settings.select.field.height.setValue(fieldList[i].bounds.height);
-					if (!fieldList[i].vector.components[2]) {
-						document.getElementById('selectMagneticField').style.display = 'none';
-						document.getElementById('selectElectricalField').style.display = 'block';
-						settings.select.field.electrical.strength.setValue(fieldList[i].vector.getMagnitude());
-						settings.select.field.electrical.direction.direction = fieldList[i].vector.getUnitVector();
-					} else {
-						document.getElementById('selectMagneticField').style.display = 'block';
-						document.getElementById('selectElectricalField').style.display = 'none';
-						settings.select.field.magnetic.strength.setValue(Math.abs(fieldList[i].vector.components[2]));
-						settings.select.field.magnetic.direction.setValue(fieldList[i].vector.components[2] > 0 ? 0 : 1);
-					}
+					settings.select.field.dropX = fieldList[i].bounds.x1 - ((e.pageX-workplace.origin.x)/pixelsPerMeter);
+					settings.select.field.dropY = fieldList[i].bounds.y1 - ((e.pageY-workplace.origin.y)/pixelsPerMeter);
+					settings.select.dragging = true;
+					updateSelectFields(fieldList[i]);
 					return;
 				}
 			}
@@ -524,6 +542,18 @@ function mouseMove(e) {
 			fieldList[settings.field.cropping].bounds.x2 = (e.pageX - workplace.origin.x)/pixelsPerMeter;
 			fieldList[settings.field.cropping].bounds.y2 = (e.pageY - workplace.origin.y)/pixelsPerMeter;
 		}
+	} else if (currentTool == 2 && !running && settings.select.dragging) {
+		if (settings.select.particle.selected) {
+			settings.select.particle.selected.x = settings.select.particle.dropX + ((e.pageX-workplace.origin.x)/pixelsPerMeter);
+			settings.select.particle.selected.y = settings.select.particle.dropY + ((e.pageY-workplace.origin.y)/pixelsPerMeter);
+			updateSelectFields(settings.select.particle.selected);
+		} else if (settings.select.field.selected) {
+			settings.select.field.selected.bounds.x1 = settings.select.field.dropX + ((e.pageX-workplace.origin.x)/pixelsPerMeter);
+			settings.select.field.selected.bounds.y1 = settings.select.field.dropY + ((e.pageY-workplace.origin.y)/pixelsPerMeter);
+			settings.select.field.selected.bounds.x2 = settings.select.field.selected.bounds.x1 + settings.select.field.selected.bounds.width;
+			settings.select.field.selected.bounds.y2 = settings.select.field.selected.bounds.y1 + settings.select.field.selected.bounds.height;
+			updateSelectFields(settings.select.field.selected);
+		}
 	}
 }
 
@@ -538,6 +568,11 @@ function mouseUp(e) {
 		if (settings.field.cropping !== false) {
 		    fieldList[settings.field.cropping].bounds = fieldList[settings.field.cropping].bounds.normalize();
 		    settings.field.cropping = false;
+		}
+	} else if (currentTool == 2 && !running && settings.select.dragging) {
+		settings.select.dragging = false;
+		if (settings.select.particle.selected) {
+			settings.select.particle.dragging = false;
 		}
 	}
 }
