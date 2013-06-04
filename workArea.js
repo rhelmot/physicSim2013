@@ -88,3 +88,13 @@ workArea.prototype.drawX = function (centerX, centerY, radius, color) {
 	this.context.lineTo(centerX + radius, centerY - radius);
 	this.context.stroke();
 };
+
+workArea.prototype.drawAxes = function () {
+	this.context.beginPath();
+	this.context.strokeStyle = 'black';
+	this.context.moveTo(0, -this.origin.y);
+	this.context.lineTo(0, this.origin.y);
+	this.context.moveTo(-this.origin.x, 0);
+	this.context.lineTo(this.origin.x, 0);
+	this.context.stroke();
+};

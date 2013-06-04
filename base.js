@@ -12,6 +12,9 @@ window.onload = function () {
 	
 	killcode = setInterval(function () {							//MAIN LOOP
 		workplace.clear();
+		if (currentTool == 2) {
+			workplace.drawAxes();
+		}
 		settings.field.electrical.direction.draw();
 		settings.select.particle.velt.draw();
 		settings.select.field.electrical.direction.draw();
