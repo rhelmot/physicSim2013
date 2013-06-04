@@ -1,5 +1,9 @@
 /* css */
 
+html {
+  font-family: 'Helvetica Neue', Helvetiva, Arial, sans-serif;
+}
+
 canvas {
 	outline: none;
 	background-color: white;
@@ -34,9 +38,12 @@ canvas {
 }
 
 .button {
-	background-color: #AAA;
-	border: solid 1px black;
-	font-family: courier, monospace;
+	background-color: #C5C5C5;
+/*	border: solid 1px black; */
+  border-radius: 2px;
+  padding: 1px;
+  font-weight: bold;
+  color: #222;
 	font-size: 14px;
 	text-align: center;
 	display: inline-block;
